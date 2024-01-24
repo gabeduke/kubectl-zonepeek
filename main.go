@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -30,6 +29,11 @@ type PVDetails struct {
 	PVZone  string
 }
 
+var (
+	labelSelector string
+	outputFormat  string
+)
+
 func main() {
 	var kubeconfig string
 	if home := homedir.HomeDir(); home != "" {
@@ -48,18 +52,18 @@ func main() {
 		panic(err.Error())
 	}
 
-	var labelSelector = pflag.StringP("label", "l", "", "Label selector")
-	var outputFormat = pflag.StringP("output", "o", "table", "Output format: table, json, text")
+	pflag.StringVarP(&labelSelector, "label", "l", "", "Label selector")
+	pflag.StringVarP(&outputFormat, "output", "o", "table", "Output format: table, json, text")
 
-	flag.Parse()
+	pflag.Parse()
 
-	if *labelSelector == "" {
+	if labelSelector == "" {
 		fmt.Println("Label selector is required")
 		os.Exit(1)
 	}
 
 	pods, err := clientset.CoreV1().Pods("").List(context.TODO(), metav1.ListOptions{
-		LabelSelector: *labelSelector,
+		LabelSelector: labelSelector,
 	})
 	if err != nil {
 		panic(err.Error())
@@ -106,7 +110,7 @@ func main() {
 		podInfos = append(podInfos, podInfo)
 	}
 
-	switch *outputFormat {
+	switch outputFormat {
 	case "json":
 		printJSON(podInfos)
 	case "text":
