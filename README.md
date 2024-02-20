@@ -1,5 +1,3 @@
-Sure, here's a basic README for your `main.go` script:
-
 # kubectl-zonepeek
 
 `kubectl-zonepeek` is a kubectl plugin written in Go that gathers zone information from nodes and associated Persistent Volumes in a Kubernetes cluster.
